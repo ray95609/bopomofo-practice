@@ -358,9 +358,12 @@
 
         // 畫板功能
         function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.lineWidth = 12;
@@ -394,20 +397,32 @@
 
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
             };
         }
 
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
-        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
-        canvas.addEventListener('touchend', stopDrawing);
+        // 使用更精準的 Pointer Events 改善手機觸控（支援防邊緣跳動與手掌誤觸）
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            canvas.setPointerCapture(e.pointerId);
+            startDrawing(e);
+        });
+        canvas.addEventListener('pointermove', (e) => {
+            e.preventDefault();
+            draw(e);
+        });
+        canvas.addEventListener('pointerup', (e) => {
+            e.preventDefault();
+            canvas.releasePointerCapture(e.pointerId);
+            stopDrawing();
+        });
+        canvas.addEventListener('pointercancel', (e) => {
+            e.preventDefault();
+            stopDrawing();
+        });
 
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
