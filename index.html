@@ -73,10 +73,21 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
         }
 
+        .zhuyin-wrapper {
+            display: flex;
+            gap: 6px;
+        }
+
         .zhuyin-column {
             display: flex;
             flex-direction: column;
             gap: 6px;
+        }
+
+        .tone-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .slot {
@@ -112,6 +123,13 @@
             color: var(--text-color);
             border-color: #b7e4c7;
             background-color: #f7fff7;
+        }
+
+        .slot.tone {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            border-radius: 50%;
         }
 
         /* 畫板區域 */
@@ -165,14 +183,18 @@
 
         button {
             flex: 1;
-            padding: 15px;
+            padding: 15px 5px;
             border: none;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-clear {
@@ -240,8 +262,10 @@
             h1 { font-size: 1.2rem; }
             .word-container { gap: 15px; margin-bottom: 15px; }
             .char-text { font-size: 3.5rem; margin-right: 5px; }
+            .zhuyin-wrapper { gap: 4px; }
             .zhuyin-column { gap: 4px; }
             .slot { width: 40px; height: 40px; font-size: 1.4rem; border-width: 2px; border-radius: 8px; }
+            .slot.tone { width: 32px; height: 32px; font-size: 1.1rem; }
             .slot.active::after { top: -18px; font-size: 1rem; }
             .drawing-area { margin-bottom: 10px; border-width: 3px; border-radius: 16px; }
             .hint-text { font-size: 4rem; }
@@ -269,9 +293,9 @@
     </div>
 
     <div class="controls">
-        <button class="btn-clear" onclick="clearCanvas()">重寫</button>
+        <button class="btn-clear" onclick="clearCanvas()">🔄 重寫</button>
         <button class="btn-hint" onclick="showHint()">💡 提示</button>
-        <button class="btn-done" onclick="submitStroke()">完成囉！</button>
+        <button class="btn-done" onclick="submitStroke()">✅ 完成囉！</button>
     </div>
 
     <div class="success-overlay" id="overlay">
@@ -361,8 +385,14 @@
                 charText.innerText = charObj.c;
                 charBlock.appendChild(charText);
 
+                const zhuyinWrapper = document.createElement('div');
+                zhuyinWrapper.className = 'zhuyin-wrapper';
+
                 const zhuyinCol = document.createElement('div');
                 zhuyinCol.className = 'zhuyin-column';
+                
+                const toneCol = document.createElement('div');
+                toneCol.className = 'tone-column';
 
                 charObj.p.forEach((charPinyin) => {
                     const div = document.createElement('div');
@@ -376,11 +406,19 @@
                         if (localIdx === currentSlotIndex) showHint();
                     };
 
-                    zhuyinCol.appendChild(div);
+                    // 分辨是否為聲調
+                    if (['ˊ', 'ˇ', 'ˋ', '˙'].includes(charPinyin)) {
+                        div.classList.add('tone');
+                        toneCol.appendChild(div);
+                    } else {
+                        zhuyinCol.appendChild(div);
+                    }
                     flatSlotIdx++;
                 });
 
-                charBlock.appendChild(zhuyinCol);
+                zhuyinWrapper.appendChild(zhuyinCol);
+                zhuyinWrapper.appendChild(toneCol);
+                charBlock.appendChild(zhuyinWrapper);
                 container.appendChild(charBlock);
             });
 
