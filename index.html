@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小公主的注音練習本 ✏️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #fef9f2;
+            --accent-pink: #ffafcc;
+            --accent-blue: #a2d2ff;
+            --accent-green: #bde0fe;
+            --text-color: #5c5c5c;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #fff1e6 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 單詞與圖片顯示區 */
+        .word-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .target-word {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #d62828;
+            letter-spacing: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* 注音格位區 */
+        .bopomofo-slots {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .slot {
+            width: 60px;
+            height: 80px;
+            background: var(--card-bg);
+            border: 3px solid #eee;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #ccc;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .slot.active {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 15px var(--accent-pink);
+            transform: scale(1.1);
+            color: #aaa;
+        }
+
+        .slot.active::after {
+            content: "✍️";
+            position: absolute;
+            top: -20px;
+            font-size: 1.2rem;
+        }
+
+        .slot.filled {
+            color: var(--text-color);
+            border-color: #b7e4c7;
+            background-color: #f7fff7;
+        }
+
+        /* 畫板區域 */
+        .drawing-area {
+            flex-grow: 1;
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 4px dashed #ffe5ec;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .hint-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: rgba(255, 175, 204, 0.2);
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .hint-text.visible {
+            opacity: 1;
+        }
+
+        /* 按鈕區 */
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-clear {
+            background-color: #eee;
+            color: #888;
+        }
+
+        .btn-hint {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-done {
+            background-color: var(--accent-pink);
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 特效疊加 */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 175, 204, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            color: white;
+            text-align: center;
+        }
+
+        .success-overlay h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .success-overlay .btn-next {
+            background: white;
+            color: var(--accent-pink);
+            padding: 20px 40px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
+    </header>
+
+    <div class="word-container">
+        <div class="target-word" id="word-display">雞蛋</div>
+        <div class="bopomofo-slots" id="slots-container">
+            <!-- Slots will be injected here -->
+        </div>
+    </div>
+
+    <div class="drawing-area">
+        <div class="hint-text" id="canvas-hint"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="btn-clear" onclick="clearCanvas()">重寫</button>
+        <button class="btn-hint" onclick="showHint()">💡 提示</button>
+        <button class="btn-done" onclick="submitStroke()">完成囉！</button>
+    </div>
+
+    <div class="success-overlay" id="overlay">
+        <h2>太棒了！🌟</h2>
+        <button class="btn-next" onclick="resetGame()">下一個挑戰</button>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // 資料定義
+        const wordsData = [
+            { text: "蘋果", pinyin: ["ㄆ", "一", "ㄥ", "ˊ", "ㄍ", "ㄨ", "ㄛ", "ˇ"] },
+            { text: "太陽", pinyin: ["ㄊ", "ㄞ", "ˋ", "一", "ㄤ", "ˊ"] },
+            { text: "氣球", pinyin: ["ㄑ", "一", "ˋ", "ㄑ", "一", "ㄡ", "ˊ"] },
+            { text: "漢堡", pinyin: ["ㄏ", "ㄢ", "ˋ", "ㄅ", "ㄠ", "ˇ"] },
+            { text: "大象", pinyin: ["ㄉ", "ㄚ", "ˋ", "ㄒ", "一", "ㄤ", "ˋ"] },
+            { text: "長頸鹿", pinyin: ["ㄔ", "ㄤ", "ˊ", "ㄐ", "一", "ㄥ", "ˇ", "ㄌ", "ㄨ", "ˋ"] },
+            { text: "雞蛋", pinyin: ["ㄐ", "一", "ㄉ", "ㄢ", "ˋ"] },
+            { text: "貓咪", pinyin: ["ㄇ", "ㄠ", "ㄇ", "一"] },
+            { text: "餅乾", pinyin: ["ㄅ", "一", "ㄥ", "ˇ", "ㄍ", "ㄢ"] },
+            { text: "書本", pinyin: ["ㄕ", "ㄨ", "ㄅ", "ㄣ", "ˇ"] },
+            { text: "鉛筆", pinyin: ["ㄑ", "一", "ㄢ", "ㄅ", "一", "ˇ"] },
+            { text: "香蕉", pinyin: ["ㄒ", "一", "ㄤ", "ㄐ", "一", "ㄠ"] },
+            { text: "西瓜", pinyin: ["ㄒ", "一", "ㄍ", "ㄨ", "ㄚ"] },
+            { text: "汽車", pinyin: ["ㄑ", "一", "ˋ", "ㄔ", "ㄜ"] },
+            { text: "腳踏車", pinyin: ["ㄐ", "一", "ㄠ", "ˇ", "ㄊ", "ㄚ", "ˋ", "ㄔ", "ㄜ"] },
+            { text: "溜滑梯", pinyin: ["ㄌ", "一", "ㄡ", "ㄏ", "ㄨ", "ㄚ", "ˊ", "ㄊ", "一"] },
+            { text: "螃蟹", pinyin: ["ㄆ", "ㄤ", "ˊ", "ㄒ", "一", "ㄝ", "ˋ"] },
+            { text: "蝴蝶", pinyin: ["ㄏ", "ㄨ", "ˊ", "ㄉ", "一", "ㄝ", "ˊ"] },
+            { text: "蜻蜓", pinyin: ["ㄑ", "一", "ㄥ", "ㄊ", "一", "ㄥ", "ˊ"] },
+            { text: "草莓", pinyin: ["ㄘ", "ㄠ", "ˇ", "ㄇ", "ㄟ", "ˊ"] }
+        ];
+
+        let wordIndices = [];
+        let currentOrderIndex = 0;
+        let currentWordIndex = 0;
+        let currentSlotIndex = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initOrder() {
+            wordIndices = Array.from({ length: wordsData.length }, (_, i) => i);
+            shuffleArray(wordIndices);
+            currentOrderIndex = 0;
+            currentWordIndex = wordIndices[currentOrderIndex];
+        }
+
+        initOrder();
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const slotsContainer = document.getElementById('slots-container');
+        const wordDisplay = document.getElementById('word-display');
+        const canvasHint = document.getElementById('canvas-hint');
+        const overlay = document.getElementById('overlay');
+
+        let isDrawing = false;
+        let points = [];
+
+        // 初始化
+        function initGame() {
+            const word = wordsData[currentWordIndex];
+            wordDisplay.innerText = word.text;
+            slotsContainer.innerHTML = '';
+            currentSlotIndex = 0;
+
+            word.pinyin.forEach((char, index) => {
+                const div = document.createElement('div');
+                div.className = 'slot' + (index === 0 ? ' active' : '');
+                div.innerText = '？';
+                div.onclick = () => {
+                    if (index === currentSlotIndex) showHint();
+                };
+                slotsContainer.appendChild(div);
+            });
+
+            updateHint();
+            speak(`我們來寫：${word.text}`);
+            resizeCanvas();
+        }
+
+        function updateHint() {
+            const char = wordsData[currentWordIndex].pinyin[currentSlotIndex];
+            canvasHint.innerText = char;
+            hideHint();
+
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach((s, idx) => {
+                s.classList.remove('active');
+                if (idx === currentSlotIndex) s.classList.add('active');
+            });
+        }
+
+        function showHint() {
+            canvasHint.classList.add('visible');
+            speak(wordsData[currentWordIndex].pinyin[currentSlotIndex]);
+        }
+
+        function hideHint() {
+            canvasHint.classList.remove('visible');
+        }
+
+        // 畫板功能
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 12;
+            ctx.strokeStyle = '#ff8fab';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            hideHint();
+            const pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            points.push(pos);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            points.push(pos);
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+            }
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            points = [];
+            hideHint();
+        }
+
+        // 提交與進度
+        function submitStroke() {
+            if (points.length < 5) {
+                speak("再多畫幾筆喔！");
+                return;
+            }
+
+            const char = wordsData[currentWordIndex].pinyin[currentSlotIndex];
+            speak(char);
+
+            // 更新 Slot UI
+            const slots = document.querySelectorAll('.slot');
+            slots[currentSlotIndex].innerText = char;
+            slots[currentSlotIndex].classList.add('filled');
+
+            clearCanvas();
+            currentSlotIndex++;
+
+            if (currentSlotIndex >= wordsData[currentWordIndex].pinyin.length) {
+                finishWord();
+            } else {
+                updateHint();
+            }
+        }
+
+        function finishWord() {
+            speak(`好聰明！拼對囉：${wordsData[currentWordIndex].text}`);
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ffafcc', '#a2d2ff', '#bde0fe', '#ffc8dd']
+            });
+
+            setTimeout(() => {
+                overlay.style.display = 'flex';
+            }, 1000);
+        }
+
+        function resetGame() {
+            overlay.style.display = 'none';
+            currentOrderIndex++;
+            if (currentOrderIndex >= wordIndices.length) {
+                shuffleArray(wordIndices);
+                currentOrderIndex = 0;
+            }
+            currentWordIndex = wordIndices[currentOrderIndex];
+            initGame();
+        }
+
+        // 語音功能
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-TW';
+            utter.rate = 0.9;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // 啟動
+        setTimeout(initGame, 500);
+
+    </script>
+</body>
+
+</html>
