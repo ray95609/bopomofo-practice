@@ -53,31 +53,35 @@
 
         /* 單詞與圖片顯示區 */
         .word-container {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .target-word {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #d62828;
-            letter-spacing: 10px;
-            margin-bottom: 5px;
-        }
-
-        /* 注音格位區 */
-        .bopomofo-slots {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
             justify-content: center;
-            margin-bottom: 15px;
-            padding: 0 10px;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .char-block {
+            display: flex;
+            align-items: center;
+        }
+
+        .char-text {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #d62828;
+            margin-right: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .zhuyin-column {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .slot {
-            width: 60px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             background: var(--card-bg);
             border: 3px solid #eee;
             border-radius: 12px;
@@ -234,10 +238,10 @@
         @media (max-width: 600px) {
             header { padding: 10px; }
             h1 { font-size: 1.2rem; }
-            .word-container { margin-bottom: 5px; }
-            .target-word { font-size: 2rem; letter-spacing: 5px; margin-bottom: 0px; }
-            .bopomofo-slots { gap: 6px; margin-bottom: 10px; padding: 0 5px; }
-            .slot { width: 42px; height: 55px; font-size: 1.4rem; border-width: 2px; border-radius: 8px; }
+            .word-container { gap: 15px; margin-bottom: 15px; }
+            .char-text { font-size: 3.5rem; margin-right: 5px; }
+            .zhuyin-column { gap: 4px; }
+            .slot { width: 40px; height: 40px; font-size: 1.4rem; border-width: 2px; border-radius: 8px; }
             .slot.active::after { top: -18px; font-size: 1rem; }
             .drawing-area { margin-bottom: 10px; border-width: 3px; border-radius: 16px; }
             .hint-text { font-size: 4rem; }
@@ -255,11 +259,8 @@
         <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
     </header>
 
-    <div class="word-container">
-        <div class="target-word" id="word-display">雞蛋</div>
-        <div class="bopomofo-slots" id="slots-container">
-            <!-- Slots will be injected here -->
-        </div>
+    <div class="word-container" id="word-container">
+        <!-- char blocks will be injected here -->
     </div>
 
     <div class="drawing-area">
@@ -286,26 +287,26 @@
     <script>
         // 資料定義
         const wordsData = [
-            { text: "蘋果", pinyin: ["ㄆ", "一", "ㄥ", "ˊ", "ㄍ", "ㄨ", "ㄛ", "ˇ"] },
-            { text: "太陽", pinyin: ["ㄊ", "ㄞ", "ˋ", "一", "ㄤ", "ˊ"] },
-            { text: "氣球", pinyin: ["ㄑ", "一", "ˋ", "ㄑ", "一", "ㄡ", "ˊ"] },
-            { text: "漢堡", pinyin: ["ㄏ", "ㄢ", "ˋ", "ㄅ", "ㄠ", "ˇ"] },
-            { text: "大象", pinyin: ["ㄉ", "ㄚ", "ˋ", "ㄒ", "一", "ㄤ", "ˋ"] },
-            { text: "長頸鹿", pinyin: ["ㄔ", "ㄤ", "ˊ", "ㄐ", "一", "ㄥ", "ˇ", "ㄌ", "ㄨ", "ˋ"] },
-            { text: "雞蛋", pinyin: ["ㄐ", "一", "ㄉ", "ㄢ", "ˋ"] },
-            { text: "貓咪", pinyin: ["ㄇ", "ㄠ", "ㄇ", "一"] },
-            { text: "餅乾", pinyin: ["ㄅ", "一", "ㄥ", "ˇ", "ㄍ", "ㄢ"] },
-            { text: "書本", pinyin: ["ㄕ", "ㄨ", "ㄅ", "ㄣ", "ˇ"] },
-            { text: "鉛筆", pinyin: ["ㄑ", "一", "ㄢ", "ㄅ", "一", "ˇ"] },
-            { text: "香蕉", pinyin: ["ㄒ", "一", "ㄤ", "ㄐ", "一", "ㄠ"] },
-            { text: "西瓜", pinyin: ["ㄒ", "一", "ㄍ", "ㄨ", "ㄚ"] },
-            { text: "汽車", pinyin: ["ㄑ", "一", "ˋ", "ㄔ", "ㄜ"] },
-            { text: "腳踏車", pinyin: ["ㄐ", "一", "ㄠ", "ˇ", "ㄊ", "ㄚ", "ˋ", "ㄔ", "ㄜ"] },
-            { text: "溜滑梯", pinyin: ["ㄌ", "一", "ㄡ", "ㄏ", "ㄨ", "ㄚ", "ˊ", "ㄊ", "一"] },
-            { text: "螃蟹", pinyin: ["ㄆ", "ㄤ", "ˊ", "ㄒ", "一", "ㄝ", "ˋ"] },
-            { text: "蝴蝶", pinyin: ["ㄏ", "ㄨ", "ˊ", "ㄉ", "一", "ㄝ", "ˊ"] },
-            { text: "蜻蜓", pinyin: ["ㄑ", "一", "ㄥ", "ㄊ", "一", "ㄥ", "ˊ"] },
-            { text: "草莓", pinyin: ["ㄘ", "ㄠ", "ˇ", "ㄇ", "ㄟ", "ˊ"] }
+            { text: "蘋果", chars: [{c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"]}, {c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"]}] },
+            { text: "太陽", chars: [{c: "太", p: ["ㄊ", "ㄞ", "ˋ"]}, {c: "陽", p: ["一", "ㄤ", "ˊ"]}] },
+            { text: "氣球", chars: [{c: "氣", p: ["ㄑ", "一", "ˋ"]}, {c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"]}] },
+            { text: "漢堡", chars: [{c: "漢", p: ["ㄏ", "ㄢ", "ˋ"]}, {c: "堡", p: ["ㄅ", "ㄠ", "ˇ"]}] },
+            { text: "大象", chars: [{c: "大", p: ["ㄉ", "ㄚ", "ˋ"]}, {c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"]}] },
+            { text: "長頸鹿", chars: [{c: "長", p: ["ㄔ", "ㄤ", "ˊ"]}, {c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"]}, {c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"]}] },
+            { text: "雞蛋", chars: [{c: "雞", p: ["ㄐ", "一"]}, {c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"]}] },
+            { text: "貓咪", chars: [{c: "貓", p: ["ㄇ", "ㄠ"]}, {c: "咪", p: ["ㄇ", "一"]}] },
+            { text: "餅乾", chars: [{c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"]}, {c: "乾", p: ["ㄍ", "ㄢ"]}] },
+            { text: "書本", chars: [{c: "書", p: ["ㄕ", "ㄨ"]}, {c: "本", p: ["ㄅ", "ㄣ", "ˇ"]}] },
+            { text: "鉛筆", chars: [{c: "鉛", p: ["ㄑ", "一", "ㄢ"]}, {c: "筆", p: ["ㄅ", "一", "ˇ"]}] },
+            { text: "香蕉", chars: [{c: "香", p: ["ㄒ", "一", "ㄤ"]}, {c: "蕉", p: ["ㄐ", "一", "ㄠ"]}] },
+            { text: "西瓜", chars: [{c: "西", p: ["ㄒ", "一"]}, {c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"]}] },
+            { text: "汽車", chars: [{c: "汽", p: ["ㄑ", "一", "ˋ"]}, {c: "車", p: ["ㄔ", "ㄜ"]}] },
+            { text: "腳踏車", chars: [{c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"]}, {c: "踏", p: ["ㄊ", "ㄚ", "ˋ"]}, {c: "車", p: ["ㄔ", "ㄜ"]}] },
+            { text: "溜滑梯", chars: [{c: "溜", p: ["ㄌ", "一", "ㄡ"]}, {c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"]}, {c: "梯", p: ["ㄊ", "一"]}] },
+            { text: "螃蟹", chars: [{c: "螃", p: ["ㄆ", "ㄤ", "ˊ"]}, {c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"]}] },
+            { text: "蝴蝶", chars: [{c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"]}, {c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"]}] },
+            { text: "蜻蜓", chars: [{c: "蜻", p: ["ㄑ", "一", "ㄥ"]}, {c: "蜓", p: ["ㄊ", "一", "ㄥ", "ˊ"]}] },
+            { text: "草莓", chars: [{c: "草", p: ["ㄘ", "ㄠ", "ˇ"]}, {c: "莓", p: ["ㄇ", "ㄟ", "ˊ"]}] }
         ];
 
         let wordIndices = [];
@@ -331,8 +332,7 @@
 
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const slotsContainer = document.getElementById('slots-container');
-        const wordDisplay = document.getElementById('word-display');
+        const container = document.getElementById('word-container');
         const canvasHint = document.getElementById('canvas-hint');
         const overlay = document.getElementById('overlay');
 
@@ -342,18 +342,44 @@
         // 初始化
         function initGame() {
             const word = wordsData[currentWordIndex];
-            wordDisplay.innerText = word.text;
-            slotsContainer.innerHTML = '';
-            currentSlotIndex = 0;
+            container.innerHTML = '';
+            
+            // 攤平 pinyin 陣列，讓原有的進度與陣列對應邏輯能繼續正常運作
+            word.pinyin = word.chars.flatMap(c => c.p);
 
-            word.pinyin.forEach((char, index) => {
-                const div = document.createElement('div');
-                div.className = 'slot' + (index === 0 ? ' active' : '');
-                div.innerText = '？';
-                div.onclick = () => {
-                    if (index === currentSlotIndex) showHint();
-                };
-                slotsContainer.appendChild(div);
+            currentSlotIndex = 0;
+            let flatSlotIdx = 0;
+
+            word.chars.forEach(charObj => {
+                const charBlock = document.createElement('div');
+                charBlock.className = 'char-block';
+
+                const charText = document.createElement('div');
+                charText.className = 'char-text';
+                charText.innerText = charObj.c;
+                charBlock.appendChild(charText);
+
+                const zhuyinCol = document.createElement('div');
+                zhuyinCol.className = 'zhuyin-column';
+
+                charObj.p.forEach((charPinyin) => {
+                    const div = document.createElement('div');
+                    const isFirst = (flatSlotIdx === 0);
+                    div.className = 'slot' + (isFirst ? ' active' : '');
+                    div.innerText = '？';
+                    div.dataset.index = flatSlotIdx;
+                    
+                    const localIdx = flatSlotIdx;
+                    div.onclick = () => {
+                        if (localIdx === currentSlotIndex) showHint();
+                    };
+
+                    zhuyinCol.appendChild(div);
+                    flatSlotIdx++;
+                });
+
+                charBlock.appendChild(zhuyinCol);
+                container.appendChild(charBlock);
             });
 
             updateHint();
