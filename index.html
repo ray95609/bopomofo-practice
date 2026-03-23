@@ -338,6 +338,8 @@
 
         let isDrawing = false;
         let points = [];
+        let currentStroke = { xs: [], ys: [], times: [] };
+        let ink = [];
 
         // 初始化
         function initGame() {
@@ -431,6 +433,7 @@
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
             points.push(pos);
+            currentStroke = { xs: [pos.x], ys: [pos.y], times: [Date.now()] };
         }
 
         function draw(e) {
@@ -439,11 +442,17 @@
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             points.push(pos);
+            currentStroke.xs.push(pos.x);
+            currentStroke.ys.push(pos.y);
+            currentStroke.times.push(Date.now());
         }
 
         function stopDrawing() {
             if (isDrawing) {
                 isDrawing = false;
+                if (currentStroke.xs.length > 0) {
+                    ink.push([currentStroke.xs, currentStroke.ys, currentStroke.times]);
+                }
             }
         }
 
@@ -479,31 +488,88 @@
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             points = [];
+            ink = [];
             hideHint();
         }
 
         // 提交與進度
-        function submitStroke() {
-            if (points.length < 5) {
+        async function submitStroke() {
+            if (ink.length === 0) {
                 speak("再多畫幾筆喔！");
                 return;
             }
 
             const char = wordsData[currentWordIndex].pinyin[currentSlotIndex];
-            speak(char);
+            
+            // 讀取按鈕以顯示 Loading 狀態
+            const btnDone = document.querySelector('.btn-done');
+            const originalText = btnDone.innerText;
+            btnDone.innerText = "辨識中...";
+            btnDone.disabled = true;
 
-            // 更新 Slot UI
-            const slots = document.querySelectorAll('.slot');
-            slots[currentSlotIndex].innerText = char;
-            slots[currentSlotIndex].classList.add('filled');
+            const requestData = {
+                options: "enable_pre_space",
+                requests: [{
+                    writing_guide: { writing_area_width: canvas.width, writing_area_height: canvas.height },
+                    ink: ink,
+                    language: "zh-TW"
+                }]
+            };
 
-            clearCanvas();
-            currentSlotIndex++;
+            let isMatch = false;
 
-            if (currentSlotIndex >= wordsData[currentWordIndex].pinyin.length) {
-                finishWord();
+            try {
+                const response = await fetch("https://inputtools.google.com/request?ime=handwriting&app=mobilesearch&cs=1&oe=UTF-8", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+
+                if (data[0] === "SUCCESS") {
+                    const suggestions = data[1][0][1];
+                    // 檢查正確答案是否出現在建議清單中 (寬容度高，如果前幾名有符合就算對)
+                    if (suggestions.includes(char)) {
+                        isMatch = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Handwriting API Error:", err);
+                // 發生錯誤的話，暫時直接放行或當作失敗？
+                // 這裡選擇當作辨識錯誤，以免學習中斷，但也可以選擇放行。
+            } finally {
+                btnDone.innerText = originalText;
+                btnDone.disabled = false;
+            }
+
+            if (isMatch) {
+                speak(char);
+
+                // 更新 Slot UI
+                const slots = document.querySelectorAll('.slot');
+                slots[currentSlotIndex].innerText = char;
+                slots[currentSlotIndex].classList.add('filled');
+
+                clearCanvas();
+                currentSlotIndex++;
+
+                if (currentSlotIndex >= wordsData[currentWordIndex].pinyin.length) {
+                    finishWord();
+                } else {
+                    updateHint();
+                }
             } else {
-                updateHint();
+                speak("哎呀，好像不太對喔！再試一次吧！");
+                
+                // 加上一個簡單的錯誤視覺提示：將畫板震動或變紅 (如果想要的話)
+                const drawingArea = document.querySelector('.drawing-area');
+                drawingArea.style.borderColor = "red";
+                drawingArea.style.transform = "translateX(-5px)";
+                setTimeout(() => drawingArea.style.transform = "translateX(5px)", 100);
+                setTimeout(() => drawingArea.style.transform = "translateX(0)", 200);
+                setTimeout(() => drawingArea.style.borderColor = "#ffe5ec", 1000);
+                
+                clearCanvas();
             }
         }
 
