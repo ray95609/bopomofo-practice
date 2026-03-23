@@ -63,9 +63,11 @@
         /* 注音格位區 */
         .bopomofo-slots {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             justify-content: center;
             margin-bottom: 15px;
+            padding: 0 10px;
         }
 
         .slot {
@@ -219,6 +221,21 @@
             color: var(--accent-pink);
             padding: 20px 40px;
             font-size: 1.5rem;
+        }
+
+        /* 手機版 RWD 縮放 */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.2rem; }
+            .target-word { font-size: 2.2rem; letter-spacing: 5px; margin-bottom: 0px; }
+            .bopomofo-slots { gap: 8px; margin-bottom: 10px; }
+            .slot { width: 45px; height: 60px; font-size: 1.5rem; border-width: 2px; border-radius: 8px; }
+            .slot.active::after { top: -20px; font-size: 1rem; }
+            .drawing-area { margin-bottom: 15px; border-width: 3px; border-radius: 16px; }
+            .hint-text { font-size: 5rem; }
+            .controls { gap: 10px; margin-bottom: 20px; }
+            button { padding: 12px; font-size: 1.1rem; }
+            .success-overlay h2 { font-size: 2.2rem; }
+            .success-overlay .btn-next { padding: 15px 30px; font-size: 1.2rem; }
         }
     </style>
 </head>
