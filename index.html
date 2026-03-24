@@ -43,24 +43,80 @@
         }
 
         header {
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
 
         h1 {
             margin: 0;
             color: var(--text-color);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         /* 單詞與圖片顯示區 */
+        .question-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            flex-shrink: 0;
+            padding: 0 10px;
+        }
+
+        .question-image-box {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at top left, #ffffff, #fff0f5);
+            border: 6px solid #fff;
+            box-shadow: 0 10px 25px rgba(255, 175, 204, 0.4);
+            border-radius: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            transition: filter 0.1s;
+        }
+
+        .question-image-box:active {
+            filter: brightness(0.85);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .question-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 30px;
+        }
+
         .word-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 25px;
-            margin-bottom: 20px;
+            gap: 20px;
         }
 
         .char-block {
@@ -268,16 +324,29 @@
         /* 手機版 RWD 縮放 */
         @media (max-width: 600px) {
             header {
-                padding: 10px;
+                padding: 8px;
             }
 
             h1 {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+            }
+
+            .question-layout {
+                gap: 8px;
+                margin-bottom: 10px;
+                padding: 0;
+            }
+
+            .question-image-box {
+                width: 120px;
+                height: 120px;
+                font-size: 4.5rem;
+                border-radius: 30px;
+                border-width: 4px;
             }
 
             .word-container {
-                gap: 15px;
-                margin-bottom: 15px;
+                gap: 10px;
             }
 
             .char-text {
@@ -353,8 +422,13 @@
         <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
     </header>
 
-    <div class="word-container" id="word-container">
-        <!-- char blocks will be injected here -->
+    <div class="question-layout">
+        <div class="question-image-box" id="question-image">
+            <!-- image will be injected here -->
+        </div>
+        <div class="word-container" id="word-container">
+            <!-- char blocks will be injected here -->
+        </div>
     </div>
 
     <div class="drawing-area">
@@ -365,7 +439,7 @@
     <div class="controls">
         <button class="btn-clear" onclick="clearCanvas()">🔄 重寫</button>
         <button class="btn-hint" onclick="showHint()">💡 提示</button>
-        <button class="btn-done" onclick="submitStroke()">✅ 完成囉！</button>
+        <button class="btn-done" onclick="submitStroke()">✅ 寫完了！</button>
     </div>
 
     <div class="success-overlay" id="overlay">
@@ -381,26 +455,26 @@
     <script>
         // 資料定義
         const wordsData = [
-            { text: "蘋果", chars: [{ c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"] }, { c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"] }] },
-            { text: "太陽", chars: [{ c: "太", p: ["ㄊ", "ㄞ", "ˋ"] }, { c: "陽", p: ["一", "ㄤ", "ˊ"] }] },
-            { text: "氣球", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
-            { text: "漢堡", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
-            { text: "大象", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
-            { text: "長頸鹿", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
-            { text: "雞蛋", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
-            { text: "貓咪", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
-            { text: "餅乾", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄍ", "ㄢ"] }] },
-            { text: "書本", chars: [{ c: "書", p: ["ㄕ", "ㄨ"] }, { c: "本", p: ["ㄅ", "ㄣ", "ˇ"] }] },
-            { text: "鉛筆", chars: [{ c: "鉛", p: ["ㄑ", "一", "ㄢ"] }, { c: "筆", p: ["ㄅ", "一", "ˇ"] }] },
-            { text: "香蕉", chars: [{ c: "香", p: ["ㄒ", "一", "ㄤ"] }, { c: "蕉", p: ["ㄐ", "一", "ㄠ"] }] },
-            { text: "西瓜", chars: [{ c: "西", p: ["ㄒ", "一"] }, { c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"] }] },
-            { text: "汽車", chars: [{ c: "汽", p: ["ㄑ", "一", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
-            { text: "腳踏車", chars: [{ c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"] }, { c: "踏", p: ["ㄊ", "ㄚ", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
-            { text: "溜滑梯", chars: [{ c: "溜", p: ["ㄌ", "一", "ㄡ"] }, { c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"] }, { c: "梯", p: ["ㄊ", "一"] }] },
-            { text: "螃蟹", chars: [{ c: "螃", p: ["ㄆ", "ㄤ", "ˊ"] }, { c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"] }] },
-            { text: "蝴蝶", chars: [{ c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"] }, { c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"] }] },
-            { text: "蜻蜓", chars: [{ c: "蜻", p: ["ㄑ", "一", "ㄥ"] }, { c: "蜓", p: ["ㄊ", "一", "ㄥ", "ˊ"] }] },
-            { text: "草莓", chars: [{ c: "草", p: ["ㄘ", "ㄠ", "ˇ"] }, { c: "莓", p: ["ㄇ", "ㄟ", "ˊ"] }] }
+            { text: "蘋果", img: "🍎", chars: [{ c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"] }, { c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"] }] },
+            { text: "太陽", img: "☀️", chars: [{ c: "太", p: ["ㄊ", "ㄞ", "ˋ"] }, { c: "陽", p: ["一", "ㄤ", "ˊ"] }] },
+            { text: "氣球", img: "🎈", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
+            { text: "漢堡", img: "🍔", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
+            { text: "大象", img: "🐘", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
+            { text: "長頸鹿", img: "🦒", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
+            { text: "雞蛋", img: "🥚", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
+            { text: "貓咪", img: "🐱", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
+            { text: "餅乾", img: "🍪", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄍ", "ㄢ"] }] },
+            { text: "書本", img: "📖", chars: [{ c: "書", p: ["ㄕ", "ㄨ"] }, { c: "本", p: ["ㄅ", "ㄣ", "ˇ"] }] },
+            { text: "鉛筆", img: "✏️", chars: [{ c: "鉛", p: ["ㄑ", "一", "ㄢ"] }, { c: "筆", p: ["ㄅ", "一", "ˇ"] }] },
+            { text: "香蕉", img: "🍌", chars: [{ c: "香", p: ["ㄒ", "一", "ㄤ"] }, { c: "蕉", p: ["ㄐ", "一", "ㄠ"] }] },
+            { text: "西瓜", img: "🍉", chars: [{ c: "西", p: ["ㄒ", "一"] }, { c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"] }] },
+            { text: "汽車", img: "🚗", chars: [{ c: "汽", p: ["ㄑ", "一", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
+            { text: "腳踏車", img: "🚲", chars: [{ c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"] }, { c: "踏", p: ["ㄊ", "ㄚ", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
+            { text: "溜滑梯", img: "🛝", chars: [{ c: "溜", p: ["ㄌ", "一", "ㄡ"] }, { c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"] }, { c: "梯", p: ["ㄊ", "一"] }] },
+            { text: "螃蟹", img: "🦀", chars: [{ c: "螃", p: ["ㄆ", "ㄤ", "ˊ"] }, { c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"] }] },
+            { text: "蝴蝶", img: "🦋", chars: [{ c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"] }, { c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"] }] },
+            { text: "蜜蜂", img: "🐝", chars: [{ c: "蜜", p: ["ㄇ", "一", "ˋ"] }, { c: "蜂", p: ["ㄈ", "ㄥ"] }] },
+            { text: "草莓", img: "🍓", chars: [{ c: "草", p: ["ㄘ", "ㄠ", "ˇ"] }, { c: "莓", p: ["ㄇ", "ㄟ", "ˊ"] }] }
         ];
 
         let wordIndices = [];
@@ -439,6 +513,24 @@
         function initGame() {
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
+
+            const imageBox = document.getElementById('question-image');
+
+            // 綁定點擊圖片唸題目的功能
+            imageBox.onclick = () => speak(word.text);
+            imageBox.title = "點擊聽發音";
+
+            if (word.img) {
+                // 如果 img 是一個圖片網址或檔案路徑，顯示 <img>
+                if (word.img.startsWith('http') || word.img.includes('/')) {
+                    imageBox.innerHTML = `<img src="${word.img}" alt="${word.text}">`;
+                } else {
+                    // 如果是一般 Emoji 符號，直接顯示文字
+                    imageBox.innerHTML = word.img;
+                }
+            } else {
+                imageBox.innerHTML = '❓';
+            }
 
             // 攤平 pinyin 陣列，讓原有的進度與陣列對應邏輯能繼續正常運作
             word.pinyin = word.chars.flatMap(c => c.p);
@@ -716,7 +808,7 @@
                 const utter = new SpeechSynthesisUtterance(text);
                 utter.lang = 'zh-TW';
                 utter.rate = 0.9;
-                
+
                 // 嘗試抓取本地語音庫，讓發音更穩定
                 const voices = window.speechSynthesis.getVoices();
                 const twVoice = voices.find(v => v.lang.includes('zh-TW') || v.lang.includes('zh_TW'));
