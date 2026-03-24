@@ -27,7 +27,8 @@
             padding: 0;
             background: linear-gradient(135deg, var(--primary-bg) 0%, #fff1e6 100%);
             height: 100vh;
-            height: 100dvh; /* 避免手機瀏覽器網址列遮擋底部 */
+            height: 100dvh;
+            /* 避免手機瀏覽器網址列遮擋底部 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,7 +36,9 @@
             touch-action: none;
         }
 
-        header, .word-container, .controls {
+        header,
+        .word-container,
+        .controls {
             flex-shrink: 0;
         }
 
@@ -70,7 +73,13 @@
             font-weight: 700;
             color: #d62828;
             margin-right: 8px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .char-text:active {
+            transform: scale(0.9);
         }
 
         .zhuyin-wrapper {
@@ -258,21 +267,82 @@
 
         /* 手機版 RWD 縮放 */
         @media (max-width: 600px) {
-            header { padding: 10px; }
-            h1 { font-size: 1.2rem; }
-            .word-container { gap: 15px; margin-bottom: 15px; }
-            .char-text { font-size: 3.5rem; margin-right: 5px; }
-            .zhuyin-wrapper { gap: 4px; }
-            .zhuyin-column { gap: 4px; }
-            .slot { width: 40px; height: 40px; font-size: 1.4rem; border-width: 2px; border-radius: 8px; }
-            .slot.tone { width: 32px; height: 32px; font-size: 1.1rem; }
-            .slot.active::after { top: -18px; font-size: 1rem; }
-            .drawing-area { margin-bottom: 10px; border-width: 3px; border-radius: 16px; }
-            .hint-text { font-size: 4rem; }
-            .controls { gap: 10px; margin-bottom: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); width: 95%; max-width: 100%; }
-            button { padding: 12px 5px; font-size: 1.1rem; }
-            .success-overlay h2 { font-size: 2.2rem; }
-            .success-overlay .btn-next { padding: 15px 30px; font-size: 1.2rem; }
+            header {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .word-container {
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+
+            .char-text {
+                font-size: 3.5rem;
+                margin-right: 5px;
+            }
+
+            .zhuyin-wrapper {
+                gap: 4px;
+            }
+
+            .zhuyin-column {
+                gap: 4px;
+            }
+
+            .slot {
+                width: 40px;
+                height: 40px;
+                font-size: 1.4rem;
+                border-width: 2px;
+                border-radius: 8px;
+            }
+
+            .slot.tone {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1rem;
+            }
+
+            .slot.active::after {
+                top: -18px;
+                font-size: 1rem;
+            }
+
+            .drawing-area {
+                margin-bottom: 10px;
+                border-width: 3px;
+                border-radius: 16px;
+            }
+
+            .hint-text {
+                font-size: 4rem;
+            }
+
+            .controls {
+                gap: 10px;
+                margin-bottom: 10px;
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+                width: 95%;
+                max-width: 100%;
+            }
+
+            button {
+                padding: 12px 5px;
+                font-size: 1.1rem;
+            }
+
+            .success-overlay h2 {
+                font-size: 2.2rem;
+            }
+
+            .success-overlay .btn-next {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -311,26 +381,26 @@
     <script>
         // 資料定義
         const wordsData = [
-            { text: "蘋果", chars: [{c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"]}, {c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"]}] },
-            { text: "太陽", chars: [{c: "太", p: ["ㄊ", "ㄞ", "ˋ"]}, {c: "陽", p: ["一", "ㄤ", "ˊ"]}] },
-            { text: "氣球", chars: [{c: "氣", p: ["ㄑ", "一", "ˋ"]}, {c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"]}] },
-            { text: "漢堡", chars: [{c: "漢", p: ["ㄏ", "ㄢ", "ˋ"]}, {c: "堡", p: ["ㄅ", "ㄠ", "ˇ"]}] },
-            { text: "大象", chars: [{c: "大", p: ["ㄉ", "ㄚ", "ˋ"]}, {c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"]}] },
-            { text: "長頸鹿", chars: [{c: "長", p: ["ㄔ", "ㄤ", "ˊ"]}, {c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"]}, {c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"]}] },
-            { text: "雞蛋", chars: [{c: "雞", p: ["ㄐ", "一"]}, {c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"]}] },
-            { text: "貓咪", chars: [{c: "貓", p: ["ㄇ", "ㄠ"]}, {c: "咪", p: ["ㄇ", "一"]}] },
-            { text: "餅乾", chars: [{c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"]}, {c: "乾", p: ["ㄍ", "ㄢ"]}] },
-            { text: "書本", chars: [{c: "書", p: ["ㄕ", "ㄨ"]}, {c: "本", p: ["ㄅ", "ㄣ", "ˇ"]}] },
-            { text: "鉛筆", chars: [{c: "鉛", p: ["ㄑ", "一", "ㄢ"]}, {c: "筆", p: ["ㄅ", "一", "ˇ"]}] },
-            { text: "香蕉", chars: [{c: "香", p: ["ㄒ", "一", "ㄤ"]}, {c: "蕉", p: ["ㄐ", "一", "ㄠ"]}] },
-            { text: "西瓜", chars: [{c: "西", p: ["ㄒ", "一"]}, {c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"]}] },
-            { text: "汽車", chars: [{c: "汽", p: ["ㄑ", "一", "ˋ"]}, {c: "車", p: ["ㄔ", "ㄜ"]}] },
-            { text: "腳踏車", chars: [{c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"]}, {c: "踏", p: ["ㄊ", "ㄚ", "ˋ"]}, {c: "車", p: ["ㄔ", "ㄜ"]}] },
-            { text: "溜滑梯", chars: [{c: "溜", p: ["ㄌ", "一", "ㄡ"]}, {c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"]}, {c: "梯", p: ["ㄊ", "一"]}] },
-            { text: "螃蟹", chars: [{c: "螃", p: ["ㄆ", "ㄤ", "ˊ"]}, {c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"]}] },
-            { text: "蝴蝶", chars: [{c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"]}, {c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"]}] },
-            { text: "蜻蜓", chars: [{c: "蜻", p: ["ㄑ", "一", "ㄥ"]}, {c: "蜓", p: ["ㄊ", "一", "ㄥ", "ˊ"]}] },
-            { text: "草莓", chars: [{c: "草", p: ["ㄘ", "ㄠ", "ˇ"]}, {c: "莓", p: ["ㄇ", "ㄟ", "ˊ"]}] }
+            { text: "蘋果", chars: [{ c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"] }, { c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"] }] },
+            { text: "太陽", chars: [{ c: "太", p: ["ㄊ", "ㄞ", "ˋ"] }, { c: "陽", p: ["一", "ㄤ", "ˊ"] }] },
+            { text: "氣球", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
+            { text: "漢堡", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
+            { text: "大象", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
+            { text: "長頸鹿", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
+            { text: "雞蛋", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
+            { text: "貓咪", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
+            { text: "餅乾", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄍ", "ㄢ"] }] },
+            { text: "書本", chars: [{ c: "書", p: ["ㄕ", "ㄨ"] }, { c: "本", p: ["ㄅ", "ㄣ", "ˇ"] }] },
+            { text: "鉛筆", chars: [{ c: "鉛", p: ["ㄑ", "一", "ㄢ"] }, { c: "筆", p: ["ㄅ", "一", "ˇ"] }] },
+            { text: "香蕉", chars: [{ c: "香", p: ["ㄒ", "一", "ㄤ"] }, { c: "蕉", p: ["ㄐ", "一", "ㄠ"] }] },
+            { text: "西瓜", chars: [{ c: "西", p: ["ㄒ", "一"] }, { c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"] }] },
+            { text: "汽車", chars: [{ c: "汽", p: ["ㄑ", "一", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
+            { text: "腳踏車", chars: [{ c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"] }, { c: "踏", p: ["ㄊ", "ㄚ", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
+            { text: "溜滑梯", chars: [{ c: "溜", p: ["ㄌ", "一", "ㄡ"] }, { c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"] }, { c: "梯", p: ["ㄊ", "一"] }] },
+            { text: "螃蟹", chars: [{ c: "螃", p: ["ㄆ", "ㄤ", "ˊ"] }, { c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"] }] },
+            { text: "蝴蝶", chars: [{ c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"] }, { c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"] }] },
+            { text: "蜻蜓", chars: [{ c: "蜻", p: ["ㄑ", "一", "ㄥ"] }, { c: "蜓", p: ["ㄊ", "一", "ㄥ", "ˊ"] }] },
+            { text: "草莓", chars: [{ c: "草", p: ["ㄘ", "ㄠ", "ˇ"] }, { c: "莓", p: ["ㄇ", "ㄟ", "ˊ"] }] }
         ];
 
         let wordIndices = [];
@@ -369,7 +439,7 @@
         function initGame() {
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
-            
+
             // 攤平 pinyin 陣列，讓原有的進度與陣列對應邏輯能繼續正常運作
             word.pinyin = word.chars.flatMap(c => c.p);
 
@@ -383,6 +453,8 @@
                 const charText = document.createElement('div');
                 charText.className = 'char-text';
                 charText.innerText = charObj.c;
+                charText.title = "點擊聽發音";
+                charText.onclick = () => speak(charObj.c);
                 charBlock.appendChild(charText);
 
                 const zhuyinWrapper = document.createElement('div');
@@ -390,7 +462,7 @@
 
                 const zhuyinCol = document.createElement('div');
                 zhuyinCol.className = 'zhuyin-column';
-                
+
                 const toneCol = document.createElement('div');
                 toneCol.className = 'tone-column';
 
@@ -400,7 +472,7 @@
                     div.className = 'slot' + (isFirst ? ' active' : '');
                     div.innerText = '？';
                     div.dataset.index = flatSlotIdx;
-                    
+
                     const localIdx = flatSlotIdx;
                     div.onclick = () => {
                         if (localIdx === currentSlotIndex) showHint();
@@ -455,7 +527,7 @@
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
-            
+
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.lineWidth = 12;
@@ -538,7 +610,7 @@
             }
 
             const char = wordsData[currentWordIndex].pinyin[currentSlotIndex];
-            
+
             // 讀取按鈕以顯示 Loading 狀態
             const btnDone = document.querySelector('.btn-done');
             const originalText = btnDone.innerText;
@@ -598,7 +670,7 @@
                 }
             } else {
                 speak("哎呀，好像不太對喔！再試一次吧！");
-                
+
                 // 加上一個簡單的錯誤視覺提示：將畫板震動或變紅 (如果想要的話)
                 const drawingArea = document.querySelector('.drawing-area');
                 drawingArea.style.borderColor = "red";
@@ -606,7 +678,7 @@
                 setTimeout(() => drawingArea.style.transform = "translateX(5px)", 100);
                 setTimeout(() => drawingArea.style.transform = "translateX(0)", 200);
                 setTimeout(() => drawingArea.style.borderColor = "#ffe5ec", 1000);
-                
+
                 clearCanvas();
             }
         }
@@ -638,11 +710,24 @@
 
         // 語音功能
         function speak(text) {
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'zh-TW';
-            utter.rate = 0.9;
-            window.speechSynthesis.speak(utter);
+            if ('speechSynthesis' in window) {
+                // 移除延遲，因為 iOS 規定語音必須在「點擊事件當下」直接觸發，否則會被阻擋
+                // 移除 cancel()，因為在某些版本的 Safari 呼叫 cancel 後再 speak 會完全沒聲音
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'zh-TW';
+                utter.rate = 0.9;
+                
+                // 嘗試抓取本地語音庫，讓發音更穩定
+                const voices = window.speechSynthesis.getVoices();
+                const twVoice = voices.find(v => v.lang.includes('zh-TW') || v.lang.includes('zh_TW'));
+                if (twVoice) {
+                    utter.voice = twVoice;
+                }
+
+                window.speechSynthesis.speak(utter);
+            } else {
+                console.warn("您的瀏覽器不支援語音合成功能");
+            }
         }
 
         // 啟動
