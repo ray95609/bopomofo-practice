@@ -130,6 +130,7 @@
             justify-content: center;
             gap: 20px;
             padding: 10px;
+            max-width: 100%;
         }
 
         .char-block {
@@ -192,6 +193,7 @@
             transform: translateY(-4px) scale(1.15);
             color: var(--accent-pink);
             background: #fff;
+            z-index: 20;
         }
 
         .slot.active::after {
@@ -200,6 +202,7 @@
             top: -22px;
             font-size: 1.3rem;
             animation: bounce-float 1.5s infinite;
+            z-index: 20;
         }
 
         .slot.filled {
@@ -257,6 +260,7 @@
             max-width: 500px;
             height: 100%;
             justify-content: center;
+            min-width: 0;
         }
 
         /* 遊戲進度與怪物區 (直立式) */
@@ -332,6 +336,7 @@
             flex-grow: 1;
             flex-shrink: 1;
             min-height: 120px;
+            max-height: 60dvh;
             width: 90%;
             max-width: 500px;
             background: rgba(255, 255, 255, 0.8);
@@ -540,26 +545,27 @@
             }
 
             .word-container {
-                gap: 10px;
+                gap: 6px;
+                padding: 2px;
             }
 
             .char-text {
-                font-size: 3.5rem;
-                margin-right: 5px;
+                font-size: clamp(2.5rem, 8vw, 3.5rem);
+                margin-right: 4px;
             }
 
             .zhuyin-wrapper {
-                gap: 4px;
+                gap: 3px;
             }
 
             .zhuyin-column {
-                gap: 4px;
+                gap: 3px;
             }
 
             .slot {
-                width: 42px;
-                height: 42px;
-                font-size: 1.6rem;
+                width: clamp(38px, 10vw, 42px);
+                height: clamp(38px, 10vw, 42px);
+                font-size: clamp(1.4rem, 4vw, 1.6rem);
                 border-width: 3px;
                 border-radius: 14px;
                 box-shadow: 0 4px 0 #ffe5ec;
@@ -571,9 +577,9 @@
             }
 
             .slot.tone {
-                width: 34px;
-                height: 34px;
-                font-size: 1.2rem;
+                width: clamp(28px, 8vw, 34px);
+                height: clamp(28px, 8vw, 34px);
+                font-size: clamp(1rem, 3vw, 1.2rem);
             }
 
             .slot.active::after {
@@ -582,25 +588,25 @@
             }
 
             .word-container.is-long-word {
-                gap: 25px 6px;
+                gap: 15px 4px;
             }
 
             .is-long-word .char-text {
-                font-size: 2.2rem;
+                font-size: clamp(1.8rem, 6vw, 2.2rem);
                 margin-right: 2px;
             }
 
             .is-long-word .slot {
-                width: 32px;
-                height: 32px;
-                font-size: 1.2rem;
+                width: clamp(28px, 8.5vw, 32px);
+                height: clamp(28px, 8.5vw, 32px);
+                font-size: clamp(1rem, 3vw, 1.2rem);
                 border-width: 2px;
             }
 
             .is-long-word .slot.tone {
-                width: 24px;
-                height: 24px;
-                font-size: 0.9rem;
+                width: clamp(22px, 6.5vw, 24px);
+                height: clamp(22px, 6.5vw, 24px);
+                font-size: clamp(0.85rem, 2.5vw, 0.9rem);
             }
 
             .is-long-word .slot.active::after {
