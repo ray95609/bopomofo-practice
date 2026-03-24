@@ -201,14 +201,17 @@
         .word-container.is-long-word {
             gap: 10px;
         }
+
         .is-long-word .char-text {
             font-size: 3rem;
         }
+
         .is-long-word .slot {
             width: 40px;
             height: 40px;
             font-size: 1.4rem;
         }
+
         .is-long-word .slot.tone {
             width: 30px;
             height: 30px;
@@ -261,7 +264,7 @@
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid #fff;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -421,7 +424,7 @@
             background: white;
             padding: 40px;
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -458,8 +461,15 @@
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         /* 手機版 RWD 縮放 */
@@ -525,21 +535,25 @@
             .word-container.is-long-word {
                 gap: 5px;
             }
+
             .is-long-word .char-text {
                 font-size: 2.2rem;
                 margin-right: 2px;
             }
+
             .is-long-word .slot {
                 width: 32px;
                 height: 32px;
                 font-size: 1.2rem;
                 border-width: 2px;
             }
+
             .is-long-word .slot.tone {
                 width: 24px;
                 height: 24px;
                 font-size: 0.9rem;
             }
+
             .is-long-word .slot.active::after {
                 top: -16px;
                 font-size: 0.9rem;
@@ -586,9 +600,11 @@
                 padding: 10px 5px;
                 gap: 8px;
             }
+
             .center-content {
                 justify-content: flex-start;
             }
+
             .game-status-bar {
                 width: 50px;
                 padding: 10px 5px;
@@ -597,9 +613,11 @@
                 border-radius: 20px;
                 margin-bottom: 0px;
             }
+
             .progress-container {
                 width: 14px;
             }
+
             .monster-display {
                 font-size: 2.2rem;
             }
@@ -659,26 +677,26 @@
     <script>
         // 資料定義
         const wordsData = [
-            { text: "蘋果", img: "🍎", chars: [{ c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"] }, { c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"] }] },
-            { text: "太陽", img: "☀️", chars: [{ c: "太", p: ["ㄊ", "ㄞ", "ˋ"] }, { c: "陽", p: ["一", "ㄤ", "ˊ"] }] },
-            { text: "氣球", img: "🎈", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
-            { text: "漢堡", img: "🍔", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
-            { text: "大象", img: "🐘", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
-            { text: "長頸鹿", img: "🦒", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
-            { text: "雞蛋", img: "🥚", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
-            { text: "貓咪", img: "🐱", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
-            { text: "餅乾", img: "🍪", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄍ", "ㄢ"] }] },
-            { text: "書本", img: "📖", chars: [{ c: "書", p: ["ㄕ", "ㄨ"] }, { c: "本", p: ["ㄅ", "ㄣ", "ˇ"] }] },
-            { text: "鉛筆", img: "✏️", chars: [{ c: "鉛", p: ["ㄑ", "一", "ㄢ"] }, { c: "筆", p: ["ㄅ", "一", "ˇ"] }] },
-            { text: "香蕉", img: "🍌", chars: [{ c: "香", p: ["ㄒ", "一", "ㄤ"] }, { c: "蕉", p: ["ㄐ", "一", "ㄠ"] }] },
-            { text: "西瓜", img: "🍉", chars: [{ c: "西", p: ["ㄒ", "一"] }, { c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"] }] },
-            { text: "汽車", img: "🚗", chars: [{ c: "汽", p: ["ㄑ", "一", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
+            // { text: "蘋果", img: "🍎", chars: [{ c: "蘋", p: ["ㄆ", "一", "ㄥ", "ˊ"] }, { c: "果", p: ["ㄍ", "ㄨ", "ㄛ", "ˇ"] }] },
+            // { text: "太陽", img: "☀️", chars: [{ c: "太", p: ["ㄊ", "ㄞ", "ˋ"] }, { c: "陽", p: ["一", "ㄤ", "ˊ"] }] },
+            // { text: "氣球", img: "🎈", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
+            // { text: "漢堡", img: "🍔", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
+            // { text: "大象", img: "🐘", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
+            // { text: "長頸鹿", img: "🦒", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
+            // { text: "雞蛋", img: "🥚", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
+            // { text: "貓咪", img: "🐱", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
+            // { text: "餅乾", img: "🍪", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄍ", "ㄢ"] }] },
+            // { text: "書本", img: "📖", chars: [{ c: "書", p: ["ㄕ", "ㄨ"] }, { c: "本", p: ["ㄅ", "ㄣ", "ˇ"] }] },
+            // { text: "鉛筆", img: "✏️", chars: [{ c: "鉛", p: ["ㄑ", "一", "ㄢ"] }, { c: "筆", p: ["ㄅ", "一", "ˇ"] }] },
+            // { text: "香蕉", img: "🍌", chars: [{ c: "香", p: ["ㄒ", "一", "ㄤ"] }, { c: "蕉", p: ["ㄐ", "一", "ㄠ"] }] },
+            // { text: "西瓜", img: "🍉", chars: [{ c: "西", p: ["ㄒ", "一"] }, { c: "瓜", p: ["ㄍ", "ㄨ", "ㄚ"] }] },
+            // { text: "汽車", img: "🚗", chars: [{ c: "汽", p: ["ㄑ", "一", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
             { text: "腳踏車", img: "🚲", chars: [{ c: "腳", p: ["ㄐ", "一", "ㄠ", "ˇ"] }, { c: "踏", p: ["ㄊ", "ㄚ", "ˋ"] }, { c: "車", p: ["ㄔ", "ㄜ"] }] },
             { text: "溜滑梯", img: "🛝", chars: [{ c: "溜", p: ["ㄌ", "一", "ㄡ"] }, { c: "滑", p: ["ㄏ", "ㄨ", "ㄚ", "ˊ"] }, { c: "梯", p: ["ㄊ", "一"] }] },
-            { text: "螃蟹", img: "🦀", chars: [{ c: "螃", p: ["ㄆ", "ㄤ", "ˊ"] }, { c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"] }] },
-            { text: "蝴蝶", img: "🦋", chars: [{ c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"] }, { c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"] }] },
-            { text: "蜜蜂", img: "🐝", chars: [{ c: "蜜", p: ["ㄇ", "一", "ˋ"] }, { c: "蜂", p: ["ㄈ", "ㄥ"] }] },
-            { text: "草莓", img: "🍓", chars: [{ c: "草", p: ["ㄘ", "ㄠ", "ˇ"] }, { c: "莓", p: ["ㄇ", "ㄟ", "ˊ"] }] }
+            // { text: "螃蟹", img: "🦀", chars: [{ c: "螃", p: ["ㄆ", "ㄤ", "ˊ"] }, { c: "蟹", p: ["ㄒ", "一", "ㄝ", "ˋ"] }] },
+            // { text: "蝴蝶", img: "🦋", chars: [{ c: "蝴", p: ["ㄏ", "ㄨ", "ˊ"] }, { c: "蝶", p: ["ㄉ", "一", "ㄝ", "ˊ"] }] },
+            // { text: "蜜蜂", img: "🐝", chars: [{ c: "蜜", p: ["ㄇ", "一", "ˋ"] }, { c: "蜂", p: ["ㄈ", "ㄥ"] }] },
+            // { text: "草莓", img: "🍓", chars: [{ c: "草", p: ["ㄘ", "ㄠ", "ˇ"] }, { c: "莓", p: ["ㄇ", "ㄟ", "ˊ"] }] }
         ];
 
         let wordIndices = [];
@@ -743,12 +761,12 @@
             updateGameStatus();
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
-            
+
             // 處理三字詞或高度過長的注音
             const hasTallZhuyin = word.chars.some(charObj => {
                 return charObj.p.filter(c => !['ˊ', 'ˇ', 'ˋ', '˙'].includes(c)).length >= 3;
             });
-            
+
             if (word.chars.length >= 3 || hasTallZhuyin) {
                 container.classList.add('is-long-word');
             } else {
