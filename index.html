@@ -194,6 +194,12 @@
             color: var(--accent-pink);
             background: #fff;
             z-index: 20;
+            cursor: pointer;
+        }
+
+        .slot.active:active {
+            box-shadow: 0 0px 0 var(--accent-pink-dark);
+            transform: translateY(2px) scale(1.1);
         }
 
         .slot.active::after {
@@ -306,6 +312,12 @@
             animation: monster-idle 1.5s infinite alternate ease-in-out;
             transition: transform 0.3s, opacity 0.5s, filter 0.3s;
             line-height: 1;
+            cursor: pointer;
+        }
+
+        .monster-display:active {
+            transform: scale(0.9) rotate(0deg) !important;
+            animation: none !important;
         }
 
         .monster-display.hurt {
@@ -576,6 +588,11 @@
                 box-shadow: 0 4px 0 var(--accent-pink-dark);
             }
 
+            .slot.active:active {
+                box-shadow: 0 0px 0 var(--accent-pink-dark);
+                transform: translateY(0px) scale(1.1);
+            }
+
             .slot.tone {
                 width: clamp(28px, 8vw, 34px);
                 height: clamp(28px, 8vw, 34px);
@@ -688,7 +705,7 @@
 
     <div class="main-layout">
         <div class="game-status-bar">
-            <div class="monster-display" id="monster-display">👾</div>
+            <div class="monster-display" id="monster-display" onclick="playMonsterVoice()">👾</div>
             <div class="progress-container">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
@@ -766,6 +783,47 @@
 
         const monsters = ['👾', '👻', '👹', '👽', '👺'];
         const bossMonster = '🐲';
+
+        const monsterPhrases = [
+            "加油加油！小公主最棒了！",
+            "快來幫我一起寫注音！",
+            "我們一起打敗大魔王吧！",
+            "寫完就可以吃糖果囉！",
+            "嘿咻嘿咻！努力寫字！"
+        ];
+
+        let isSpeaking = false;
+
+        function playMonsterVoice() {
+            if (isSpeaking) return;
+
+            const monster = document.getElementById('monster-display');
+            if (monster.classList.contains('hurt') || monster.classList.contains('defeated')) return;
+            
+            // 視覺回饋
+            monster.style.animation = 'none';
+            monster.style.transform = 'scale(1.3) rotate(15deg)';
+            setTimeout(() => {
+                monster.style.transform = '';
+                monster.style.animation = 'monster-idle 1.5s infinite alternate ease-in-out';
+            }, 300);
+
+            // 語音播放
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                isSpeaking = true;
+                const phrase = monsterPhrases[Math.floor(Math.random() * monsterPhrases.length)];
+                const utterance = new SpeechSynthesisUtterance(phrase);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 1.1; // 稍微快一點點
+                utterance.pitch = 1.6; // 音調高一點，像小怪物或可愛的聲音
+                
+                utterance.onend = () => isSpeaking = false;
+                utterance.onerror = () => isSpeaking = false;
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
         function updateGameStatus() {
             const progressFill = document.getElementById('progress-fill');
