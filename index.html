@@ -197,6 +197,24 @@
             border-radius: 50%;
         }
 
+        /* 針對三個字以上的版面微調 */
+        .word-container.is-long-word {
+            gap: 10px;
+        }
+        .is-long-word .char-text {
+            font-size: 3rem;
+        }
+        .is-long-word .slot {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+        }
+        .is-long-word .slot.tone {
+            width: 30px;
+            height: 30px;
+            font-size: 1.1rem;
+        }
+
         .main-layout {
             display: flex;
             flex-direction: row;
@@ -504,6 +522,29 @@
                 font-size: 1rem;
             }
 
+            .word-container.is-long-word {
+                gap: 5px;
+            }
+            .is-long-word .char-text {
+                font-size: 2.2rem;
+                margin-right: 2px;
+            }
+            .is-long-word .slot {
+                width: 32px;
+                height: 32px;
+                font-size: 1.2rem;
+                border-width: 2px;
+            }
+            .is-long-word .slot.tone {
+                width: 24px;
+                height: 24px;
+                font-size: 0.9rem;
+            }
+            .is-long-word .slot.active::after {
+                top: -16px;
+                font-size: 0.9rem;
+            }
+
             .drawing-area {
                 margin-bottom: 10px;
                 border-width: 3px;
@@ -702,6 +743,17 @@
             updateGameStatus();
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
+            
+            // 處理三字詞或高度過長的注音
+            const hasTallZhuyin = word.chars.some(charObj => {
+                return charObj.p.filter(c => !['ˊ', 'ˇ', 'ˋ', '˙'].includes(c)).length >= 3;
+            });
+            
+            if (word.chars.length >= 3 || hasTallZhuyin) {
+                container.classList.add('is-long-word');
+            } else {
+                container.classList.remove('is-long-word');
+            }
 
             const imageBox = document.getElementById('question-image');
 
