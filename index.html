@@ -567,7 +567,10 @@
 
                     const localIdx = flatSlotIdx;
                     div.onclick = () => {
-                        if (localIdx === currentSlotIndex) showHint();
+                        if (localIdx === currentSlotIndex) {
+                            // 點擊「？」只發音，不顯示注音浮水印
+                            speak(wordsData[currentWordIndex].pinyin[currentSlotIndex]);
+                        }
                     };
 
                     // 分辨是否為聲調
