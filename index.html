@@ -956,6 +956,16 @@
             stopDrawing();
         });
 
+        // 避免 iOS Safari 觸發下拉更新 (Pull-to-refresh) 或上下滑動導致無法寫字
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        // 特別針對畫布，防止額外的觸控干擾
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             points = [];
