@@ -197,6 +197,96 @@
             border-radius: 50%;
         }
 
+        .main-layout {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-grow: 1;
+            padding: 10px;
+            gap: 15px;
+            max-width: 800px;
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 500px;
+            height: 100%;
+            justify-content: center;
+        }
+
+        /* 遊戲進度與怪物區 (直立式) */
+        .game-status-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background: white;
+            padding: 15px 10px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            height: 80vh;
+            max-height: 600px;
+            width: 60px;
+            flex-shrink: 0;
+            gap: 15px;
+        }
+
+        .progress-container {
+            width: 18px;
+            flex-grow: 1;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #fff;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .progress-fill {
+            width: 100%;
+            background: linear-gradient(0deg, var(--accent-pink), #ffc8dd);
+            height: 0%;
+            transition: height 0.5s ease-in-out, background 0.5s;
+        }
+
+        .monster-display {
+            font-size: 2.8rem;
+            animation: monster-idle 2s infinite ease-in-out;
+            transition: transform 0.3s, opacity 0.5s, filter 0.3s;
+            line-height: 1;
+        }
+
+        .monster-display.hurt {
+            transform: scale(0.8) rotate(-15deg);
+            filter: brightness(50%) sepia(100%) hue-rotate(300deg) saturate(300%);
+            animation: none;
+        }
+
+        .monster-display.defeated {
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+            animation: none;
+        }
+
+        @keyframes monster-idle {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-8px) scale(1.05);
+            }
+        }
+
         /* 畫板區域 */
         .drawing-area {
             flex-grow: 1;
@@ -299,26 +389,59 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 175, 204, 0.9);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 200;
-            color: white;
-            text-align: center;
         }
 
-        .success-overlay h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .success-overlay .btn-next {
+        .success-card {
             background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .success-card h2 {
+            font-size: 2.2rem;
             color: var(--accent-pink);
-            padding: 20px 40px;
-            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+        }
+
+        .success-card .btn-next {
+            background: var(--accent-pink);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            box-shadow: 0 6px 15px rgba(255, 175, 204, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .success-card .btn-next:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* 手機版 RWD 縮放 */
@@ -404,13 +527,40 @@
                 font-size: 1.1rem;
             }
 
-            .success-overlay h2 {
-                font-size: 2.2rem;
+            .success-card {
+                padding: 30px 20px;
             }
 
-            .success-overlay .btn-next {
-                padding: 15px 30px;
-                font-size: 1.2rem;
+            .success-card h2 {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+
+            .success-card .btn-next {
+                padding: 10px 24px;
+                font-size: 1.1rem;
+            }
+
+            .main-layout {
+                padding: 10px 5px;
+                gap: 8px;
+            }
+            .center-content {
+                justify-content: flex-start;
+            }
+            .game-status-bar {
+                width: 50px;
+                padding: 10px 5px;
+                height: 90vh;
+                gap: 10px;
+                border-radius: 20px;
+                margin-bottom: 0px;
+            }
+            .progress-container {
+                width: 14px;
+            }
+            .monster-display {
+                font-size: 2.2rem;
             }
         }
     </style>
@@ -418,33 +568,46 @@
 
 <body>
 
-    <header>
-        <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
-    </header>
-
-    <div class="question-layout">
-        <div class="question-image-box" id="question-image">
-            <!-- image will be injected here -->
+    <div class="main-layout">
+        <div class="game-status-bar">
+            <div class="monster-display" id="monster-display">👾</div>
+            <div class="progress-container">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
         </div>
-        <div class="word-container" id="word-container">
-            <!-- char blocks will be injected here -->
+
+        <div class="center-content">
+            <header>
+                <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
+            </header>
+
+            <div class="question-layout">
+                <div class="question-image-box" id="question-image">
+                    <!-- image will be injected here -->
+                </div>
+                <div class="word-container" id="word-container">
+                    <!-- char blocks will be injected here -->
+                </div>
+            </div>
+
+            <div class="drawing-area">
+                <div class="hint-text" id="canvas-hint"></div>
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <button class="btn-clear" onclick="clearCanvas()">🔄 重寫</button>
+                <button class="btn-hint" onclick="showHint()">💡 提示</button>
+                <button class="btn-done" onclick="submitStroke()">✅ 寫完了！</button>
+            </div>
         </div>
-    </div>
-
-    <div class="drawing-area">
-        <div class="hint-text" id="canvas-hint"></div>
-        <canvas id="canvas"></canvas>
-    </div>
-
-    <div class="controls">
-        <button class="btn-clear" onclick="clearCanvas()">🔄 重寫</button>
-        <button class="btn-hint" onclick="showHint()">💡 提示</button>
-        <button class="btn-done" onclick="submitStroke()">✅ 寫完了！</button>
     </div>
 
     <div class="success-overlay" id="overlay">
-        <h2>太棒了！🌟</h2>
-        <button class="btn-next" onclick="resetGame()">下一個挑戰</button>
+        <div class="success-card">
+            <h2>太棒了！🌟</h2>
+            <button class="btn-next" onclick="resetGame()">下一個挑戰</button>
+        </div>
     </div>
 
     <canvas id="confetti-canvas"></canvas>
@@ -481,6 +644,31 @@
         let currentOrderIndex = 0;
         let currentWordIndex = 0;
         let currentSlotIndex = 0;
+        let defeatedMonsters = 0;
+
+        const monsters = ['👾', '👻', '👹', '👽', '👺'];
+        const bossMonster = '🐲';
+
+        function updateGameStatus() {
+            const progressFill = document.getElementById('progress-fill');
+            const monsterDisplay = document.getElementById('monster-display');
+
+            if (monsterDisplay) {
+                monsterDisplay.classList.remove('defeated', 'hurt');
+
+                if (defeatedMonsters < 5) {
+                    // 一般怪物
+                    monsterDisplay.innerText = monsters[defeatedMonsters % monsters.length];
+                    progressFill.style.height = `${(defeatedMonsters / 5) * 100}%`;
+                    progressFill.style.background = 'linear-gradient(0deg, var(--accent-pink), #ffc8dd)';
+                } else if (defeatedMonsters === 5) {
+                    // 魔王出現
+                    monsterDisplay.innerText = bossMonster;
+                    progressFill.style.height = '100%';
+                    progressFill.style.background = 'linear-gradient(0deg, #ff4d4d, #ff9999)';
+                }
+            }
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -511,6 +699,7 @@
 
         // 初始化
         function initGame() {
+            updateGameStatus();
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
 
@@ -779,7 +968,7 @@
         }
 
         function finishWord() {
-            speak(`好聰明！拼對囉：${wordsData[currentWordIndex].text}`);
+            speak(`太棒了！拼對囉：${wordsData[currentWordIndex].text}`);
             confetti({
                 particleCount: 150,
                 spread: 70,
@@ -787,13 +976,93 @@
                 colors: ['#ffafcc', '#a2d2ff', '#bde0fe', '#ffc8dd']
             });
 
+            // 怪物受傷與打敗動畫
+            const monsterDisplay = document.getElementById('monster-display');
+            if (monsterDisplay) {
+                monsterDisplay.classList.add('hurt');
+                setTimeout(() => {
+                    monsterDisplay.classList.add('defeated');
+                }, 400);
+            }
+
             setTimeout(() => {
-                overlay.style.display = 'flex';
-            }, 1000);
+                defeatedMonsters++;
+                if (defeatedMonsters === 6) {
+                    showCandyReward();
+                } else {
+                    if (defeatedMonsters === 5) {
+                        speak("出現魔王了！快把它打敗！");
+                        const overlay = document.getElementById('overlay');
+                        overlay.innerHTML = `
+                            <div class="success-card">
+                                <h2 style="color: #ff4d4d;">🚨 魔王來了！ 🚨</h2>
+                                <button class="btn-next" style="background: #ff4d4d; box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);" onclick="resetGame()">準備挑戰！</button>
+                            </div>
+                        `;
+                    } else {
+                        restoreDefaultOverlay();
+                    }
+                    document.getElementById('overlay').style.display = 'flex';
+                }
+            }, 1200);
         }
 
-        function resetGame() {
+        function showCandyReward() {
+            const overlay = document.getElementById('overlay');
+            overlay.innerHTML = `
+                <div class="success-card">
+                    <h2 style="color: #ff4d4d;">打敗魔王了！🎉</h2>
+                    <div style="font-size: 6rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🍬</div>
+                    <p style="font-size: 1.5rem; margin-bottom: 20px; color: var(--text-color);">獲得糖果獎勵！</p>
+                    <button class="btn-next" style="background: #ff4d4d; box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);" onclick="resetGame(true)">再次遊戲</button>
+                </div>
+            `;
+            overlay.style.display = 'flex';
+            speak("太厲害了！打敗魔王了！獲得糖果獎勵！");
+
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ffafcc', '#a2d2ff', '#bde0fe', '#ffc8dd', '#fff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ffafcc', '#a2d2ff', '#bde0fe', '#ffc8dd', '#fff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function restoreDefaultOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.innerHTML = `
+                <div class="success-card">
+                    <h2>太棒了！🌟</h2>
+                    <button class="btn-next" onclick="resetGame()">下一個挑戰</button>
+                </div>
+            `;
+        }
+
+        function resetGame(isFullReset) {
+            const overlay = document.getElementById('overlay');
             overlay.style.display = 'none';
+            if (isFullReset === true) {
+                defeatedMonsters = 0;
+            }
+            restoreDefaultOverlay();
+
             currentOrderIndex++;
             if (currentOrderIndex >= wordIndices.length) {
                 shuffleArray(wordIndices);
