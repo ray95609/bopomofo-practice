@@ -5,27 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>小公主的注音練習本 ✏️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary-bg: #fef9f2;
-            --accent-pink: #ffafcc;
-            --accent-blue: #a2d2ff;
-            --accent-green: #bde0fe;
-            --text-color: #5c5c5c;
+            --primary-bg: #fff0f5;
+            --primary-bg-darker: #ffe5ec;
+            --accent-pink: #ff9ebd;
+            --accent-pink-dark: #ff7aa6;
+            --accent-blue: #8fd3f4;
+            --accent-blue-dark: #6ebbe2;
+            --accent-green: #a8e6cf;
+            --accent-green-dark: #8bcaa8;
+            --accent-orange: #ffb86c;
+            --accent-orange-dark: #e89e53;
+            --text-color: #6a6a6a;
+            --text-pink: #ff6b81;
             --card-bg: #ffffff;
         }
 
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Noto Sans TC', sans-serif;
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, var(--primary-bg) 0%, #fff1e6 100%);
+            background: radial-gradient(circle at 50% 0%, var(--primary-bg) 0%, var(--primary-bg-darker) 100%);
             height: 100vh;
             height: 100dvh;
             /* 避免手機瀏覽器網址列遮擋底部 */
@@ -70,38 +79,41 @@
         .question-image-box {
             width: 140px;
             height: 140px;
-            background: radial-gradient(circle at top left, #ffffff, #fff0f5);
-            border: 6px solid #fff;
-            box-shadow: 0 10px 25px rgba(255, 175, 204, 0.4);
-            border-radius: 36px;
+            background: #fff;
+            border: 8px solid #fff;
+            box-shadow: 0 12px 30px rgba(255, 158, 189, 0.3), inset 0 0 20px #fff0f5;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 5rem;
+            font-size: 5.5rem;
             flex-shrink: 0;
             overflow: hidden;
-            animation: float 3s ease-in-out infinite;
+            animation: bounce-float 3s ease-in-out infinite;
             position: relative;
             z-index: 10;
             cursor: pointer;
-            transition: filter 0.1s;
+            transition: transform 0.1s, filter 0.1s;
         }
 
         .question-image-box:active {
-            filter: brightness(0.85);
+            transform: scale(0.9);
+            filter: brightness(0.95);
         }
 
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
+        @keyframes bounce-float {
 
-            50% {
-                transform: translateY(-8px);
-            }
-
+            0%,
             100% {
-                transform: translateY(0px);
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-8px) rotate(-3deg);
+            }
+
+            75% {
+                transform: translateY(-5px) rotate(3deg);
             }
         }
 
@@ -109,7 +121,7 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 30px;
+            border-radius: 32px;
         }
 
         .word-container {
@@ -117,6 +129,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
+            padding: 10px;
         }
 
         .char-block {
@@ -126,16 +139,16 @@
 
         .char-text {
             font-size: 4rem;
-            font-weight: 700;
-            color: #d62828;
+            font-weight: 900;
+            color: var(--text-pink);
             margin-right: 8px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+            text-shadow: 3px 3px 0 #fff, 4px 4px 0 rgba(255, 107, 129, 0.2);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .char-text:active {
-            transform: scale(0.9);
+            transform: scale(0.8) rotate(-5deg);
         }
 
         .zhuyin-wrapper {
@@ -156,44 +169,50 @@
         }
 
         .slot {
-            width: 50px;
-            height: 50px;
-            background: var(--card-bg);
-            border: 3px solid #eee;
-            border-radius: 12px;
+            width: 52px;
+            height: 52px;
+            background: #fffcfd;
+            border: 4px solid #fff;
+            border-radius: 20px;
+            box-shadow: 0 6px 0 #ffe5ec;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            color: #ccc;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffb8c6;
             position: relative;
-            transition: all 0.3s;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 6px;
         }
 
         .slot.active {
             border-color: var(--accent-pink);
-            box-shadow: 0 0 15px var(--accent-pink);
-            transform: scale(1.1);
-            color: #aaa;
+            box-shadow: 0 6px 0 var(--accent-pink-dark);
+            transform: translateY(-4px) scale(1.15);
+            color: var(--accent-pink);
+            background: #fff;
         }
 
         .slot.active::after {
             content: "✍️";
             position: absolute;
-            top: -20px;
-            font-size: 1.2rem;
+            top: -22px;
+            font-size: 1.3rem;
+            animation: bounce-float 1.5s infinite;
         }
 
         .slot.filled {
             color: var(--text-color);
-            border-color: #b7e4c7;
-            background-color: #f7fff7;
+            border-color: var(--accent-green);
+            box-shadow: 0 6px 0 var(--accent-green-dark);
+            background-color: #f0fff4;
         }
 
         .slot.tone {
-            width: 40px;
-            height: 40px;
-            font-size: 1.5rem;
+            width: 42px;
+            height: 42px;
+            font-size: 1.6rem;
             border-radius: 50%;
         }
 
@@ -258,13 +277,13 @@
         }
 
         .progress-container {
-            width: 18px;
+            width: 22px;
             flex-grow: 1;
-            background: #eee;
-            border-radius: 10px;
+            background: #fdf5f7;
+            border-radius: 15px;
             overflow: hidden;
-            border: 2px solid #fff;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 4px solid #fff;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -272,14 +291,15 @@
 
         .progress-fill {
             width: 100%;
-            background: linear-gradient(0deg, var(--accent-pink), #ffc8dd);
+            background: linear-gradient(0deg, var(--accent-pink), var(--accent-pink-dark));
             height: 0%;
-            transition: height 0.5s ease-in-out, background 0.5s;
+            transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.5s;
+            border-radius: 10px;
         }
 
         .monster-display {
-            font-size: 2.8rem;
-            animation: monster-idle 2s infinite ease-in-out;
+            font-size: 3rem;
+            animation: monster-idle 1.5s infinite alternate ease-in-out;
             transition: transform 0.3s, opacity 0.5s, filter 0.3s;
             line-height: 1;
         }
@@ -298,13 +318,12 @@
 
         @keyframes monster-idle {
 
-            0%,
-            100% {
-                transform: translateY(0) scale(1);
+            0% {
+                transform: translateY(0) scale(1) rotate(-3deg);
             }
 
-            50% {
-                transform: translateY(-8px) scale(1.05);
+            100% {
+                transform: translateY(-10px) scale(1.1) rotate(3deg);
             }
         }
 
@@ -315,14 +334,15 @@
             min-height: 120px;
             width: 90%;
             max-width: 500px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 158, 189, 0.15);
             margin-bottom: 90px;
             /* 預留底部按鈕空間 */
             position: relative;
             overflow: hidden;
-            border: 4px dashed #ffe5ec;
+            border: 6px dashed #ffb8c6;
         }
 
         #canvas {
@@ -367,35 +387,48 @@
             padding: 15px 5px;
             border: none;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 900;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transform: translateY(0);
         }
 
         .btn-clear {
-            background-color: #eee;
-            color: #888;
+            background-color: #f7f1e3;
+            color: #aaa69d;
+            box-shadow: 0 6px 0 #d1ccc0;
+        }
+
+        .btn-clear:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 #d1ccc0;
         }
 
         .btn-hint {
             background-color: var(--accent-blue);
             color: white;
+            box-shadow: 0 6px 0 var(--accent-blue-dark);
+        }
+
+        .btn-hint:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 var(--accent-blue-dark);
         }
 
         .btn-done {
-            background-color: var(--accent-pink);
+            background-color: var(--accent-orange);
             color: white;
+            box-shadow: 0 6px 0 var(--accent-orange-dark);
         }
 
-        button:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .btn-done:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 var(--accent-orange-dark);
         }
 
         /* 特效疊加 */
@@ -426,43 +459,48 @@
         }
 
         .success-card {
-            background: white;
+            background: #fff9fa;
+            border: 8px solid #fff;
             padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(255, 158, 189, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             text-align: center;
             max-width: 90%;
         }
 
         .success-card h2 {
-            font-size: 2.2rem;
-            color: var(--accent-pink);
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: var(--accent-pink-dark);
+            text-shadow: 2px 2px 0 #ffe5ec;
             margin: 0 0 20px 0;
         }
 
         .success-card .btn-next {
             background: var(--accent-pink);
             color: white;
-            padding: 12px 30px;
-            font-size: 1.2rem;
+            padding: 15px 35px;
+            font-size: 1.3rem;
             border-radius: 50px;
-            box-shadow: 0 6px 15px rgba(255, 175, 204, 0.4);
+            box-shadow: 0 8px 0 var(--accent-pink-dark);
             border: none;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            font-weight: bold;
+            transition: all 0.1s;
+            font-weight: 900;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transform: translateY(0);
         }
 
         .success-card .btn-next:active {
-            transform: scale(0.95);
+            transform: translateY(8px);
+            box-shadow: 0 0px 0 var(--accent-pink-dark);
         }
 
         @keyframes popIn {
@@ -519,22 +557,28 @@
             }
 
             .slot {
-                width: 40px;
-                height: 40px;
-                font-size: 1.4rem;
-                border-width: 2px;
-                border-radius: 8px;
+                width: 42px;
+                height: 42px;
+                font-size: 1.6rem;
+                border-width: 3px;
+                border-radius: 14px;
+                box-shadow: 0 4px 0 #ffe5ec;
+                margin-bottom: 4px;
+            }
+
+            .slot.active {
+                box-shadow: 0 4px 0 var(--accent-pink-dark);
             }
 
             .slot.tone {
-                width: 32px;
-                height: 32px;
-                font-size: 1.1rem;
+                width: 34px;
+                height: 34px;
+                font-size: 1.2rem;
             }
 
             .slot.active::after {
-                top: -18px;
-                font-size: 1rem;
+                top: -20px;
+                font-size: 1.1rem;
             }
 
             .word-container.is-long-word {
@@ -646,7 +690,7 @@
 
         <div class="center-content">
             <header>
-                <h1>ㄅㄆㄇ 聰明練習本 ✨</h1>
+                <!-- <h1>ㄅㄆㄇ 聰明練習本 ✨</h1> -->
             </header>
 
             <div class="question-layout">
@@ -1084,8 +1128,8 @@
                         const overlay = document.getElementById('overlay');
                         overlay.innerHTML = `
                             <div class="success-card">
-                                <h2 style="color: #ff4d4d;">🚨 魔王來了！ 🚨</h2>
-                                <button class="btn-next" style="background: #ff4d4d; box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);" onclick="resetGame()">準備挑戰！</button>
+                                <h2 style="color: #ff6b81; text-shadow: 2px 2px 0 #ffe5ec;">🚨 魔王來了！ 🚨</h2>
+                                <button class="btn-next" style="background: #ff6b81; box-shadow: 0 8px 0 #ee5253;" onclick="resetGame()">準備挑戰！</button>
                             </div>
                         `;
                     } else {
@@ -1100,10 +1144,10 @@
             const overlay = document.getElementById('overlay');
             overlay.innerHTML = `
                 <div class="success-card">
-                    <h2 style="color: #ff4d4d;">打敗魔王了！🎉</h2>
-                    <div style="font-size: 6rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🍬</div>
-                    <p style="font-size: 1.5rem; margin-bottom: 20px; color: var(--text-color);">獲得糖果獎勵！</p>
-                    <button class="btn-next" style="background: #ff4d4d; box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);" onclick="resetGame(true)">再次遊戲</button>
+                    <h2 style="color: #ff6b81; text-shadow: 2px 2px 0 #ffe5ec;">打敗魔王了！🎉</h2>
+                    <div style="font-size: 6rem; margin-bottom: 20px; animation: bounce-float 3s ease-in-out infinite;">🍬</div>
+                    <p style="font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; color: var(--text-color);">獲得糖果獎勵！</p>
+                    <button class="btn-next" style="background: #ff6b81; box-shadow: 0 8px 0 #ee5253;" onclick="resetGame(true)">再次遊戲</button>
                 </div>
             `;
             overlay.style.display = 'flex';
