@@ -905,7 +905,7 @@
             { text: "氣球", img: "🎈", chars: [{ c: "氣", p: ["ㄑ", "一", "ˋ"] }, { c: "球", p: ["ㄑ", "一", "ㄡ", "ˊ"] }] },
             { text: "漢堡", img: "🍔", chars: [{ c: "漢", p: ["ㄏ", "ㄢ", "ˋ"] }, { c: "堡", p: ["ㄅ", "ㄠ", "ˇ"] }] },
             { text: "大象", img: "🐘", chars: [{ c: "大", p: ["ㄉ", "ㄚ", "ˋ"] }, { c: "象", p: ["ㄒ", "一", "ㄤ", "ˋ"] }] },
-            { text: "長頸鹿", img: "🦒", chars: [{ c: "長", p: ["ㄓ", "ㄤ", "ˇ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
+            { text: "長頸鹿", img: "🦒", chars: [{ c: "長", p: ["ㄔ", "ㄤ", "ˊ"] }, { c: "頸", p: ["ㄐ", "一", "ㄥ", "ˇ"] }, { c: "鹿", p: ["ㄌ", "ㄨ", "ˋ"] }] },
             { text: "雞蛋", img: "🥚", chars: [{ c: "雞", p: ["ㄐ", "一"] }, { c: "蛋", p: ["ㄉ", "ㄢ", "ˋ"] }] },
             { text: "貓咪", img: "🐱", chars: [{ c: "貓", p: ["ㄇ", "ㄠ"] }, { c: "咪", p: ["ㄇ", "一"] }] },
             { text: "餅乾", img: "🍪", chars: [{ c: "餅", p: ["ㄅ", "一", "ㄥ", "ˇ"] }, { c: "乾", p: ["ㄑ", "一", "ㄢ", "ˊ"] }] },
@@ -1152,6 +1152,7 @@
         }
         const stickerManager = new StickerManager();
 
+        let rewardAnimationActive = false;
         let wordIndices = [];
         let currentOrderIndex = 0;
         let currentWordIndex = 0;
@@ -1252,6 +1253,7 @@
 
         // 初始化
         function initGame() {
+            if (typeof confetti !== 'undefined') confetti.reset();
             updateGameStatus();
             const word = wordsData[currentWordIndex];
             container.innerHTML = '';
@@ -1601,9 +1603,11 @@
             speak(`太厲害了！打敗魔王了！獲得${sticker.name}貼紙！`);
 
             const duration = 3 * 1000;
+            rewardAnimationActive = true;
             const end = Date.now() + duration;
 
             (function frame() {
+                if (!rewardAnimationActive) return;
                 confetti({
                     particleCount: 5,
                     angle: 60,
@@ -1676,6 +1680,8 @@
         }
 
         function resetGame(isFullReset) {
+            rewardAnimationActive = false;
+            if (typeof confetti !== 'undefined') confetti.reset();
             const overlay = document.getElementById('overlay');
             overlay.style.display = 'none';
             if (isFullReset === true) {
