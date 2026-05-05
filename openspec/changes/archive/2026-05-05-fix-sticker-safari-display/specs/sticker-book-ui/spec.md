@@ -1,14 +1,4 @@
-# sticker-book-ui Specification
-
-## Purpose
-TBD - created by archiving change add-sticker-reward-system. Update Purpose after archive.
-## Requirements
-### Requirement: 收集冊按鈕
-系統必須 (SHALL) 在主畫面的遊戲狀態欄（game-status-bar）中提供一個進入收集冊的入口。
-
-#### Scenario: 點擊收集冊按鈕
-- **WHEN** 玩家點擊狀態欄下方的「收集冊」按鈕
-- **THEN** 系統必須 (SHALL) 彈出全螢幕的貼紙收集冊介面
+## MODIFIED Requirements
 
 ### Requirement: 貼紙牆顯示
 系統必須 (SHALL) 以網格形式展示所有 10 款貼紙的狀態，並確保在不同瀏覽器（包括 Safari）及舊版行動裝置上均能正確渲染。
@@ -21,10 +11,11 @@ TBD - created by archiving change add-sticker-reward-system. Update Purpose afte
 - **WHEN** 玩家打開收集冊，且某張貼紙已經收集
 - **THEN** 系統必須 (SHALL) 顯示該貼紙的彩色原貌，確保圖標在 Safari 瀏覽器中不縮小為零，並在點擊時播放相關音效
 
+## ADDED Requirements
+
 ### Requirement: 介面佈局相容性
 系統必須 (SHALL) 支援較舊版本的行動裝置瀏覽器，確保網格容器在不支援新 CSS 屬性（如 aspect-ratio）的情況下仍能正常顯示。
 
 #### Scenario: 在舊版 iPad 上開啟收集冊
 - **WHEN** 在 iOS 15 以下的 iPad 上開啟收集冊
 - **THEN** 系統必須 (SHALL) 確保貼紙網格的每一格保持正確的高度，不可塌陷為零
-
